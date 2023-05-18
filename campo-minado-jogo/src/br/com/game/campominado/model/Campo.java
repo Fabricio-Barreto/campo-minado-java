@@ -1,5 +1,7 @@
 package br.com.game.campominado.model;
 
+import br.com.game.campominado.exception.ExplosaoException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,88 @@ public class Campo {
             return true;
         } else {
             return  false;
+        }
+    }
+
+    public void alternarMarcacao() {
+        if(!aberto) {
+            marcado = !marcado;
+        }
+    }
+
+    public boolean abrir() {
+        if(!aberto && !marcado) {
+            aberto = true;
+
+            if(minado) {
+                throw new ExplosaoException();
+            }
+
+            if(vizinhacaSegura()){
+                vizinhos.forEach(v -> v.abrir());
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean vizinhacaSegura() {
+        return vizinhos.stream().noneMatch(v -> v.minado);
+    }
+
+    public void minar() {
+        minado = true;
+    }
+
+    public boolean isMarcado(){
+        return marcado;
+    }
+
+    public boolean isAberto(){
+        return aberto;
+    }
+
+    public boolean isFechado(){
+        return !aberto;
+    }
+
+    public int getLinha() {
+        return linha;
+    }
+
+    public int getColuna() {
+        return coluna;
+    }
+
+    boolean objectivoAlcancado() {
+        boolean desvendado = !minado && aberto;
+        boolean protegido = minado && marcado;
+        return desvendado || protegido;
+    }
+
+    long minasNaVizinhanca() {
+        return vizinhos.stream().filter(v -> v.minado).count();
+    }
+
+    void reiniciar () {
+        aberto = false;
+        minado = false;
+        marcado = false;
+    }
+
+    public String toString() {
+        if (marcado) {
+            return "x";
+        } else if (aberto && minado) {
+            return "*";
+        } else if (aberto && minasNaVizinhanca() > 0) {
+            return Long.toString(minasNaVizinhanca());
+        } else if(aberto) {
+            return " ";
+        } else {
+            return "?";
         }
     }
 }
