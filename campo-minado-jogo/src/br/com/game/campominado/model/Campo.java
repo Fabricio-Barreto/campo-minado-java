@@ -89,6 +89,10 @@ public class Campo {
         return !aberto;
     }
 
+    void setAberto(boolean aberto) {
+        this.aberto = aberto;
+    }
+
     public int getLinha() {
         return linha;
     }
@@ -121,7 +125,7 @@ public class Campo {
         } else if (aberto && minasNaVizinhanca() > 0) {
             return Long.toString(minasNaVizinhanca());
         } else if(aberto) {
-            return " ";
+            return "@";
         } else {
             return "?";
         }
